@@ -16,11 +16,14 @@ import brandExisting from "../content/kit/step2-existing-brand.md";
 import designSystem from "../content/kit/step3-design-system.md";
 import projectInstructions from "../content/kit/step4-project-instructions.md";
 import templateIndex from "../content/kit/template-index.md";
+import renderSteps from "../content/render.md";
 
 export const onboarding = {
   overview,
   steps: { 1: step1, 2: step2, 3: step3, 4: step4, 5: step5 },
 };
+
+export { renderSteps };
 
 export const kit = {
   voiceGuide,

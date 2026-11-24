@@ -5,8 +5,6 @@
 // Keys live in the CLIENTS KV namespace. Delete a key to turn that client off.
 
 import { tools, callTool } from "./tools.js";
-import { clientId, serveFile, listPhotos, savePhoto, deletePhoto } from "./files.js";
-import { uploadPage } from "./upload-page.js";
 
 const SUPPORTED_VERSIONS = ["2025-11-25", "2025-06-18", "2025-03-26", "2024-11-05"];
 const KEY_PATTERN = /^[A-Za-z0-9_-]{16,128}$/;
@@ -46,7 +44,7 @@ async function findClient(request, env, url) {
   return { key, ...record };
 }
 
-async function handleMessage(msg, env, client, ctx, request) {
+async function handleMessage(msg, env, client, ctx) {
   if (!msg || msg.jsonrpc !== "2.0" || typeof msg.method !== "string") {
     return rpcError(msg?.id, -32600, "Invalid request");
   }
@@ -71,14 +69,7 @@ async function handleMessage(msg, env, client, ctx, request) {
     case "tools/list":
       return ok({ tools });
     case "tools/call": {
-      const toolCtx = {
-        env,
-        key: client.key,
-        cid: await clientId(client.key),
-        origin: new URL(request.url).origin,
-        checkRenderQuota: (n) => checkRenderQuota(env, client, n),
-      };
-      const result = await callTool(params.name, params.arguments || {}, toolCtx);
+      const result = callTool(params.name, params.arguments || {});
       if (!result) return rpcError(msg.id, -32602, `Unknown tool: ${params.name}`);
       return ok(result);
     }
@@ -89,44 +80,6 @@ async function handleMessage(msg, env, client, ctx, request) {
     default:
       return rpcError(msg.id, -32601, `Method not found: ${msg.method}`);
   }
-}
-
-// Daily cap on rendered slides per client, to keep browser costs predictable.
-async function checkRenderQuota(env, client, slides) {
-  const limit = Number(env.RENDER_DAILY_LIMIT || 60);
-  const counterKey = `usage:${await clientId(client.key)}:${new Date().toISOString().slice(0, 10)}`;
-  const used = Number((await env.CLIENTS.get(counterKey)) || 0);
-  if (used + slides > limit) {
-    return { ok: false, message: `Today's limit of ${limit} rendered images is reached. It resets at midnight UTC.` };
-  }
-  await env.CLIENTS.put(counterKey, String(used + slides), { expirationTtl: 60 * 60 * 48 });
-  return { ok: true };
-}
-
-async function handleUpload(request, env, url) {
-  const m = url.pathname.match(/^\/upload\/([^/]+)(\/delete)?\/?$/);
-  const client = m && (await findClient(request, env, new URL(`${url.origin}/mcp/${m[1]}`)));
-  if (!client) return new Response("This link isn't active. Contact your provider for a new link.", { status: 401 });
-  const cid = await clientId(client.key);
-
-  if (request.method === "GET" && !m[2]) {
-    const photos = await listPhotos(env, cid);
-    const html = uploadPage({ product: env.PRODUCT_NAME || "Scroll Model", clientName: client.client, photos, origin: url.origin });
-    return new Response(html, {
-      headers: { "content-type": "text/html; charset=utf-8", "referrer-policy": "no-referrer", "x-robots-tag": "noindex" },
-    });
-  }
-  if (request.method !== "POST") return new Response("Method not allowed", { status: 405 });
-  // Only accept form posts from the page itself.
-  const origin = request.headers.get("origin");
-  if (origin && origin !== url.origin) return json({ error: "Not allowed" }, 403);
-
-  if (m[2]) {
-    const { path } = await request.json().catch(() => ({}));
-    return (await deletePhoto(env, cid, path)) ? json({ ok: true }) : json({ error: "Not found" }, 404);
-  }
-  const result = await savePhoto(env, cid, await request.formData());
-  return result.error ? json(result, 400) : json(result);
 }
 
 function strip(client) {
@@ -145,11 +98,6 @@ export default {
         headers: { "content-type": "text/plain" },
       });
     }
-
-    if (url.pathname.startsWith("/files/") && (request.method === "GET" || request.method === "HEAD")) {
-      return serveFile(env, url.pathname.slice("/files/".length));
-    }
-    if (url.pathname.startsWith("/upload/")) return handleUpload(request, env, url);
 
     if (!url.pathname.startsWith("/mcp")) return new Response("Not found", { status: 404 });
 
@@ -173,10 +121,10 @@ export default {
 
     try {
       if (Array.isArray(body)) {
-        const replies = (await Promise.all(body.map((m) => handleMessage(m, env, client, ctx, request)))).filter(Boolean);
+        const replies = (await Promise.all(body.map((m) => handleMessage(m, env, client, ctx)))).filter(Boolean);
         return replies.length ? json(replies) : new Response(null, { status: 202, headers: CORS });
       }
-      const reply = await handleMessage(body, env, client, ctx, request);
+      const reply = await handleMessage(body, env, client, ctx);
       return reply ? json(reply) : new Response(null, { status: 202, headers: CORS });
     } catch (err) {
       console.error(err);

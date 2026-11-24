@@ -16,7 +16,7 @@ Give the client these files, each as a downloadable .md file named exactly as be
 
 7. **Template Index**: call `build_kit_prompt` with `template_index`.
 
-8. **Setup checklist**: what's left before they send the Step 1 prompt. Files to add to their project (Client Onboarding Brief, Example Captions, Template Index, inspiration screenshots), photos still to add to their library (with their upload link), which prompt to send in which order, and every open [CONFIRM] item in one list.
+8. **Setup checklist**: what's left before they send the Step 1 prompt. Files to add to their project (Client Onboarding Brief, Example Captions, Template Index, inspiration screenshots), the photo and branding folder to add, a reminder to turn on code execution and file creation in their AI app's settings (it's how posts become downloadable images), which prompt to send in which order, and every open [CONFIRM] item in one list.
 
 Use the prompt text exactly as `build_kit_prompt` returns it. Don't edit, shorten or rewrite it.
 

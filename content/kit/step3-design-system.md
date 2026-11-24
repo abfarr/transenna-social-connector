@@ -4,7 +4,7 @@ Also include:
 - The signature moves we chose, each with a preview
 - The style direction we chose, named at the top of the guidelines, with its depth moves and any one borrowed move
 - A detail kit for that direction, drawn from my world, as assets (Tactile: paper, tape, clips, tags, hand-drawn marks; Editorial: rules, frames, photo treatments; Bold Graphic: shapes and color blocks; Photo-led: crop and band treatments; Playful: stickers, shapes, doodles; Custom: whatever its moves need)
-- Every photo and cutout from my photo library (list_photos) as assets
+- Every photo and cutout from my linked folder as assets
 - Type voices from my direction's profile: display, body, and an accent font only if the profile includes one
 - My direction's density and layering rules (margins, words per slide, how many slides get layers) in the guidelines
 - Series details: progress dots, a swipe cue, small sentence-case labels

@@ -37,8 +37,7 @@ switch (cmd) {
     break;
   }
   case "list": {
-    // Usage counters share the store; client keys never contain ":".
-    const keys = JSON.parse(wrangler("key", "list")).filter(({ name }) => !name.includes(":"));
+    const keys = JSON.parse(wrangler("key", "list"));
     if (!keys.length) console.log("No clients yet.");
     for (const { name } of keys) {
       const c = get(name);

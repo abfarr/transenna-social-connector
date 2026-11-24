@@ -12,7 +12,7 @@ Any mix of these is fine. More gives a better result.
 - Your website link
 - Your social account handles
 - A few past posts or captions you're proud of
-- Your logo files and your best photos (you'll upload these to your photo library during onboarding)
+- Your logo files and a folder of your best photos
 - Screenshots of a few accounts whose look you like
 - If you have them, screenshots of your post insights (top posts, reach)
 
@@ -35,13 +35,15 @@ On a Team or Enterprise plan, your workspace owner adds it under **Organization 
 
 Menu names in both apps change from time to time. If you can't find these, tell us and we'll walk you through it.
 
-## 3. Optional: add Unsplash
+## 3. Turn on file creation and, optionally, Unsplash
 
-Your posts use your own photos first. If you'd also like free stock photos for general scenes and backgrounds, add the **Unsplash** connector in the same connector settings. You'll be asked during onboarding whether you want them used.
+In Claude, go to **Settings → Capabilities** and check that **Code execution and file creation** is on. That's how your posts become images you can download. (On a Team or Enterprise plan, your workspace owner controls this.)
+
+Your posts use your own photos first. If you'd also like free stock photos for general scenes and backgrounds, add the **Unsplash** connector in your connector settings. You'll be asked during onboarding whether you want them used.
 
 ## 4. Create a project
 
-Create a new project in your AI app for your social posts.
+Create a new project in your AI app for your social posts. Add your photo and branding folder to it.
 
 ## 5. Start onboarding
 
@@ -49,7 +51,7 @@ In a new chat in that project, with the connector turned on, say:
 
 > Start my social post onboarding.
 
-Share what you gathered when it asks. It will give you a private link to your **photo library**: open it in your browser and add your photos, product shots, cutouts and logo files. Then it will review your current social accounts, ask a few questions about anything it couldn't find, and give you your files.
+Share what you gathered when it asks. It will review your current social accounts, ask a few questions about anything it couldn't find, and then give you your files.
 
 ## 6. Finish setup
 
@@ -59,4 +61,4 @@ Onboarding ends with a setup checklist. In short:
 2. Send the Step 1, Step 2 and Step 3 prompts in order, each in your project, following the checklist.
 3. Paste the project instructions into your project's instructions.
 
-After that, ask for posts in any chat in the project. When you approve a design, you'll get download links for each image, ready to post. To add or change photos later, ask for your photo library link.
+After that, ask for posts in any chat in the project. When you approve a design, you'll get PNG files to download, ready to post. If it asks you to attach a photo, attach it in the chat.
