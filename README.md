@@ -93,3 +93,21 @@ To try it in Claude yourself before a client does, add a client for yourself and
 - The finished prompts (their voice guide and so on) are the client's to keep, since they run them in their own project.
 - Rendering is tested in Claude. ChatGPT's code tool usually has no internet access, so it can't download fonts and may not have a browser; expect ChatGPT clients to get the copy and concepts but not reliable PNGs until that's tested.
 - On Claude Team and Enterprise, network access in the sandbox is off by default, so fonts can't be downloaded. The owner can allow it under Organization settings → Capabilities, or clients can attach their font files.
+
+## Decisions
+
+Newest first. Add a line here whenever a choice is made that someone would otherwise have to rediscover.
+
+| Date | Decision | Why |
+|---|---|---|
+| 2026-11-24 | Merge PR #1 (connector v1) into `main`. New work goes on a branch and back in through a PR. | v1 is deployed and working, so `main` now matches what's live. |
+| 2026-11-24 | Commit the KV namespace id in `wrangler.toml`. | It identifies the store but grants no access, and anyone deploying needs it. Client keys and links are the secrets, and they're never committed. |
+| 2026-11-24 | Keep the `allowScripts` block in `package.json` for `esbuild` and `workerd`. | Wrangler needs their install scripts, and npm skips them otherwise. Update the versions there when Wrangler is upgraded. |
+| 2026-11-24 | `scripts/clients.mjs` runs Wrangler's own script with the current Node, not `npx`. | `npx` can't be found from a script on Windows (it's `npx.cmd`). This also avoids shell quoting breaking the JSON values. |
+| 2026-11-24 | Use Wrangler, not Cloudflare's beta `cf` CLI. Its Claude Code plugin is optional and not installed yet. | The project has a Wrangler config and Wrangler is logged in. The plugin install failed on Claude Code 2.1.63 (see [docs/deployment.md](docs/deployment.md)). |
+| 2026-11-24 | Serve from the `workers.dev` address for now. | It works with no DNS setup. Moving to a custom domain later means giving existing clients new links. |
+| 2026-11-24 | Render posts in the client's own AI code sandbox and store nothing about clients on the server. This removed the earlier server-side rendering (Cloudflare Browser Rendering) and the per-client photo library (R2). | Client briefs, captions, prompts and photos stay in the client's own project, and the server has nothing to secure or pay to store. Clients need "Code execution and file creation" turned on. |
+| 2026-11-24 | Unsplash stock photos only if the client opts in during onboarding, through their own Unsplash connector, with credit. Their own photos come first. | Keeps the brand look the client's own and keeps licensing on their account. |
+| 2026-11-24 | The product is called Scroll Model (`PRODUCT_NAME` in `wrangler.toml`, Worker name `scroll-model`). | |
+| 2026-11-24 | Access is a private per-client key in the connector URL, stored in the `CLIENTS` KV namespace, with no sign-in. | Lets clients add the connector in Claude or ChatGPT with "No sign in", and lets us pause or remove a client without touching anyone else. |
+| 2026-11-24 | Build it as a remote MCP server on Cloudflare Workers that serves onboarding one step at a time and fills the kit prompts on the server. | Works in both Claude and ChatGPT as a custom connector, and keeps the full method out of the client's view. |
