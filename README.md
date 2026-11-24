@@ -1,6 +1,8 @@
 # transenna-social-connector
 
-A connector-based social post system that works with Claude and ChatGPT.
+Scroll Model: a connector-based social post system, built for Claude.
+
+**Running it?** See [docs/admin-guide.md](docs/admin-guide.md) for what's live, setup on a new computer (Windows), adding clients, shipping changes, and the decisions so far. Clients get [docs/client-setup.md](docs/client-setup.md).
 
 It's an MCP server on Cloudflare Workers. Clients add it to their AI app as a custom connector, then it walks them through onboarding one step at a time and fills in their copy of the Social Post Prompt Kit. The kit and the onboarding method live here on the server; clients only ever see the step they're on and their own filled prompts.
 
@@ -29,40 +31,21 @@ src/tools.js          the tools
 src/index.js          the MCP server and per-client access check
 scripts/clients.mjs   add, list, pause, resume and remove clients
 docs/client-setup.md  the guide you send to clients
-docs/deployment.md    operator runbook: what's live, how it was set up, what's left
 tests/                end-to-end test using the official MCP client
 ```
 
 To change what clients see, edit the Markdown in `content/` and deploy again.
 
-## First deploy (once)
+## First deploy
 
-Already done for Transenna's account on 2026-11-24. See [docs/deployment.md](docs/deployment.md) for the live URL, what was set up, and how to work from a new machine. These steps are for a fresh Cloudflare account.
-
-You need Node 20 or later and your Cloudflare account.
-
-```bash
-npm install
-npx wrangler login                        # opens a browser to sign in to Cloudflare
-npx wrangler kv namespace create CLIENTS  # prints an id
-```
-
-Paste that id into `wrangler.toml` in place of `REPLACE_WITH_KV_NAMESPACE_ID`. Change `PRODUCT_NAME` there to your product's name. Then:
-
-```bash
-npm run deploy
-```
-
-It prints your Worker URL, like `https://scroll-model.<you>.workers.dev`. Opening it in a browser should say the connector is running.
+The live setup and the full Windows steps are in [docs/admin-guide.md](docs/admin-guide.md). In short: `npm install`, `npx wrangler login`, make sure `wrangler.toml` has your `CLIENTS` KV namespace id (create one with `npx wrangler kv namespace create CLIENTS` only on a new Cloudflare account), then `npm run deploy`.
 
 ## Adding a client
 
 ```bash
-export CONNECTOR_URL=https://scroll-model.<you>.workers.dev
+export CONNECTOR_URL=https://scroll-model.throbbing-haze-7f38.workers.dev   # PowerShell: $env:CONNECTOR_URL="..."
 npm run client -- add "Client Name"
 ```
-
-In PowerShell, set the URL with `$env:CONNECTOR_URL="https://scroll-model.<you>.workers.dev"` instead of `export`.
 
 That prints the client's private connector URL. Send it to them with `docs/client-setup.md`.
 
@@ -93,3 +76,24 @@ To try it in Claude yourself before a client does, add a client for yourself and
 - The finished prompts (their voice guide and so on) are the client's to keep, since they run them in their own project.
 - Rendering is tested in Claude. ChatGPT's code tool usually has no internet access, so it can't download fonts and may not have a browser; expect ChatGPT clients to get the copy and concepts but not reliable PNGs until that's tested.
 - On Claude Team and Enterprise, network access in the sandbox is off by default, so fonts can't be downloaded. The owner can allow it under Organization settings → Capabilities, or clients can attach their font files.
+
+## Decision log
+
+What we decided while building Scroll Model, and why. Add new decisions here, newest at the bottom, with the date.
+
+_All decided 2026-11-24._
+
+- **Delivery: a connector, not a skill file or a done-for-you service.** The onboarding started as a Claude skill (social-kit-client-onboarding, saved in Alexi's Claude). Clients get it through the connector instead, so it's self-serve and the method isn't handed over.
+- **Connector instead of a full app.** Cheap to run, clients use their own Claude subscription, and Claude already handles projects, files and design. Revisit an app after 5 to 10 paying clients if setup friction or copying becomes a problem.
+- **Step-at-a-time delivery.** The kit and method stay on the server; clients see only the current step and their own filled prompts. Anything returned does appear in their chat, so this protects the method but doesn't lock it.
+- **Per-client links, no sign-in yet.** Each client's link has its own key you can pause or remove. Add proper sign-in (OAuth) only if link sharing becomes a real problem.
+- **Nothing stored about clients.** Photos stay in the client's own project. A server-side photo library and renderer were built and then removed for this reason.
+- **Rendering happens in the client's Claude.** Claude builds each slide as HTML and renders it to PNG with headless Chromium in its own code sandbox. Google's font CDN is blocked there, so fonts come from Google's font repo on GitHub. Tested in a regular claude.ai chat: worked.
+- **Hosting on Cloudflare Workers** (Workers Paid, $5 a month), with client keys in Workers KV. Stateless MCP server, no database.
+- **Product name: Scroll Model.**
+- **Kit fixes while moving it onto the server:** the Sells account type got the topic, interview, CTA and prop lines it was missing; Step 1 now reads the Client Onboarding Brief and Example Captions first; Step 3's stray "B0" reference was fixed; project instructions end with rendering approved posts to PNG.
+- **Admin runs from Alexi's Windows PC** in `C:\Users\alexi\VSCodeProjects\transenna-social-connector`. Cloudflare's general agent setup was not used.
+- **Unsplash is opt-in.** Only if the client says yes during onboarding, only for general scenes, always credited, and through their own Unsplash connector.
+- **Claude first.** ChatGPT can add the connector, but its code tool usually has no internet, so PNG rendering likely won't work there. Not tested yet.
+- **Claude Team and Enterprise clients:** the workspace owner must allow sandbox network access for fonts, or the client attaches font files.
+- **Suggested pricing (unvalidated):** self-serve $500 setup + $49 a month; done-with-you $1,500 setup + $99 a month; founding discount for the first 5 clients.
