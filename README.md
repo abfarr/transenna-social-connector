@@ -92,7 +92,11 @@ _All decided 2026-11-24._
 - **Hosting on Cloudflare Workers** (Workers Paid, $5 a month), with client keys in Workers KV. Stateless MCP server, no database.
 - **Product name: Scroll Model.**
 - **Kit fixes while moving it onto the server:** the Sells account type got the topic, interview, CTA and prop lines it was missing; Step 1 now reads the Client Onboarding Brief and Example Captions first; Step 3's stray "B0" reference was fixed; project instructions end with rendering approved posts to PNG.
-- **Admin runs from Alexi's Windows PC** in `C:\Users\alexi\VSCodeProjects\transenna-social-connector`. Cloudflare's general agent setup was not used.
+- **Admin runs from Alexi's Windows PC** in `C:\Users\alexi\VSCodeProjects\transenna-social-connector`. Cloudflare's general agent setup isn't needed. Its plugin marketplace was added to Claude Code on that PC, but the plugin install failed on Claude Code 2.1.63, so nothing else from it is installed.
+- **The KV namespace id is committed in `wrangler.toml`**, since it isn't a secret. Client links are secrets and are never committed.
+- **`package.json` keeps `allowScripts` for esbuild and workerd**, which Wrangler needs. Update the versions there when Wrangler is upgraded.
+- **The client script runs Wrangler with Node instead of `npx`**, so it works on Windows.
+- **Served from the workers.dev address for now.** Moving to a custom domain means giving every client a new link.
 - **Unsplash is opt-in.** Only if the client says yes during onboarding, only for general scenes, always credited, and through their own Unsplash connector.
 - **Claude first.** ChatGPT can add the connector, but its code tool usually has no internet, so PNG rendering likely won't work there. Not tested yet.
 - **Claude Team and Enterprise clients:** the workspace owner must allow sandbox network access for fonts, or the client attaches font files.
