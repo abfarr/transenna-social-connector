@@ -12,6 +12,7 @@
 
 import { execFileSync } from "node:child_process";
 import { randomBytes } from "node:crypto";
+import { fileURLToPath } from "node:url";
 
 const args = process.argv.slice(2);
 const local = args.includes("--local");
@@ -19,8 +20,12 @@ const [cmd, arg] = args.filter((a) => a !== "--local");
 const where = local ? "--local" : "--remote";
 const base = (process.env.CONNECTOR_URL || (local ? "http://localhost:8787" : "https://<your-worker-url>")).replace(/\/$/, "");
 
+// Run wrangler's own script with this Node, so it works the same on Windows, Mac and Linux
+// (no shell, so the JSON values aren't mangled by quoting rules).
+const WRANGLER = fileURLToPath(new URL("../node_modules/wrangler/bin/wrangler.js", import.meta.url));
+
 function wrangler(...rest) {
-  return execFileSync("npx", ["wrangler", "kv", ...rest, "--binding", "CLIENTS", where], {
+  return execFileSync(process.execPath, [WRANGLER, "kv", ...rest, "--binding", "CLIENTS", where], {
     encoding: "utf8",
     stdio: ["ignore", "pipe", "inherit"],
   });
