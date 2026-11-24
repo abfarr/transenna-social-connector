@@ -1,0 +1,22 @@
+name = "social-post-connector"
+main = "src/index.js"
+compatibility_date = "2025-11-01"
+
+# Bundle the kit's markdown into the Worker as text.
+[[rules]]
+type = "Text"
+globs = ["**/*.md"]
+fallthrough = true
+
+[vars]
+PRODUCT_NAME = "Social Post Studio"
+
+# Client keys. Create the namespace once with:
+#   npx wrangler kv namespace create CLIENTS
+# then paste the id it prints below.
+[[kv_namespaces]]
+binding = "CLIENTS"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"
+
+[observability]
+enabled = true

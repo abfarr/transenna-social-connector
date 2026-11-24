@@ -1,0 +1,25 @@
+{
+  "name": "transenna-social-connector",
+  "version": "1.0.0",
+  "description": "Social post system connector (MCP) for Claude and ChatGPT",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "client": "node scripts/clients.mjs",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abfarr/transenna-social-connector.git"
+  },
+  "bugs": {
+    "url": "https://github.com/abfarr/transenna-social-connector/issues"
+  },
+  "homepage": "https://github.com/abfarr/transenna-social-connector#readme",
+  "devDependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "wrangler": "^4.167.0"
+  },
+  "private": true,
+  "type": "module"
+}
