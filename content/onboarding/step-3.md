@@ -13,4 +13,6 @@ Share the review with the client, per account:
 
 Keep it factual and kind. It's a starting point for their system, not an audit of their work.
 
+Also call `list_photos` and check their library against the style direction you're leaning toward: Editorial and Photo-led need 10 or more strong, well-lit photos, and cutout moves need PNG cutouts. Tell them what's missing.
+
 Then call `get_onboarding_step` with step 4.

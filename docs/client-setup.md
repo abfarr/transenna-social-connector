@@ -12,7 +12,7 @@ Any mix of these is fine. More gives a better result.
 - Your website link
 - Your social account handles
 - A few past posts or captions you're proud of
-- Your logo files and a folder of your best photos
+- Your logo files and your best photos (you'll upload these to your photo library during onboarding)
 - Screenshots of a few accounts whose look you like
 - If you have them, screenshots of your post insights (top posts, reach)
 
@@ -35,19 +35,23 @@ On a Team or Enterprise plan, your workspace owner adds it under **Organization 
 
 Menu names in both apps change from time to time. If you can't find these, tell us and we'll walk you through it.
 
-## 3. Create a project
+## 3. Optional: add Unsplash
 
-Create a new project in your AI app for your social posts. Add your photo and branding folder to it.
+Your posts use your own photos first. If you'd also like free stock photos for general scenes and backgrounds, add the **Unsplash** connector in the same connector settings. You'll be asked during onboarding whether you want them used.
 
-## 4. Start onboarding
+## 4. Create a project
+
+Create a new project in your AI app for your social posts.
+
+## 5. Start onboarding
 
 In a new chat in that project, with the connector turned on, say:
 
 > Start my social post onboarding.
 
-Share what you gathered when it asks. It will review your current social accounts, ask a few questions about anything it couldn't find, and then give you your files.
+Share what you gathered when it asks. It will give you a private link to your **photo library**: open it in your browser and add your photos, product shots, cutouts and logo files. Then it will review your current social accounts, ask a few questions about anything it couldn't find, and give you your files.
 
-## 5. Finish setup
+## 6. Finish setup
 
 Onboarding ends with a setup checklist. In short:
 
@@ -55,4 +59,4 @@ Onboarding ends with a setup checklist. In short:
 2. Send the Step 1, Step 2 and Step 3 prompts in order, each in your project, following the checklist.
 3. Paste the project instructions into your project's instructions.
 
-After that, ask for posts in any chat in the project.
+After that, ask for posts in any chat in the project. When you approve a design, you'll get download links for each image, ready to post. To add or change photos later, ask for your photo library link.

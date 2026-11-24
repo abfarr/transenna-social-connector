@@ -41,11 +41,13 @@ async function connect(key = KEY) {
 }
 const textOf = (r) => r.content.map((c) => c.text).join("");
 
-test("lists the three tools, all read-only", async () => {
+test("lists the tools", async () => {
   const client = await connect();
   const { tools } = await client.listTools();
-  assert.deepEqual(tools.map((t) => t.name).sort(), ["build_kit_prompt", "get_onboarding_step", "start_onboarding"]);
-  for (const t of tools) assert.equal(t.annotations.readOnlyHint, true);
+  assert.deepEqual(tools.map((t) => t.name).sort(), [
+    "build_kit_prompt", "get_onboarding_step", "get_photo_upload_link", "list_photos", "render_post", "start_onboarding",
+  ]);
+  for (const t of tools) assert.equal(t.annotations.readOnlyHint, t.name !== "render_post");
   assert.match(client.getInstructions(), /start_onboarding/);
   await client.close();
 });
@@ -77,6 +79,8 @@ test("fills the Step 1 prompt with no blanks left", async () => {
   assert.match(t, /CTAs: order online, DM to order\./);
   assert.match(t, /Make it look like Crumb & Co/);
   assert.doesNotMatch(t, /\{\{|\[Your name\]|\[URL|\[paste one/);
+  assert.match(t, /from my photo library \(call list_photos/);
+  assert.match(t, /Don't use stock photos\./);
   assert.doesNotMatch(t, /ACCOUNT TYPE: TEACHES/);
   await client.close();
 });
@@ -118,5 +122,90 @@ test("also accepts the key as a bearer token", async () => {
     body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "tools/list" }),
   });
   assert.equal(res.status, 200);
-  assert.equal((await res.json()).result.tools.length, 3);
+  assert.equal((await res.json()).result.tools.length, 6);
+});
+
+test("Unsplash is allowed only when the client opts in", async () => {
+  const client = await connect();
+  const t = textOf(await client.callTool({
+    name: "build_kit_prompt",
+    arguments: { prompt: "voice_guide", name: "Ivy", your_name: "Ivy", account_type: "creator", website: "none", stock_photos: true },
+  }));
+  assert.match(t, /Unsplash connector, only for general scenes/);
+  assert.doesNotMatch(t, /Don't use stock photos/);
+  await client.close();
+});
+
+// A real 64x48 PNG, so the upload path sees a real image.
+const PNG = Buffer.from(
+  "iVBORw0KGgoAAAANSUhEUgAAAEAAAAAwCAIAAAAuKetIAAAAZUlEQVR4nO3PUQkAIBTAwNfIKhawfw1D+HEIgwW4zTr764YLGtCCBrSgAS1oQAsa0IIGtKABLWhACxrQgga0oAEtaEALGtCCBrSgAS1oQAsa0IIGtKABLWhACxrQgga0oAEteOwCB59Ql3yB1XYAAAAASUVORK5CYII=",
+  "base64"
+);
+
+test("photo library: upload page, upload, list with previews, delete", async () => {
+  const page = await fetch(`${BASE}/upload/${KEY}`);
+  assert.equal(page.status, 200);
+  assert.match(await page.text(), /Your photo library/);
+  assert.equal((await fetch(`${BASE}/upload/not_a_real_key_000000000`)).status, 401);
+
+  const form = new FormData();
+  form.append("photo", new Blob([PNG], { type: "image/png" }), "cutout.png");
+  form.append("thumb", new Blob([PNG], { type: "image/jpeg" }), "thumb.jpg");
+  form.append("name", "logo-green.png");
+  form.append("width", "64");
+  form.append("height", "48");
+  const up = await fetch(`${BASE}/upload/${KEY}`, { method: "POST", body: form });
+  assert.equal(up.status, 200, await up.clone().text());
+  const { path } = await up.json();
+
+  const client = await connect();
+  const link = textOf(await client.callTool({ name: "get_photo_upload_link", arguments: {} }));
+  assert.match(link, new RegExp(`/upload/${KEY}`));
+  const listed = await client.callTool({ name: "list_photos", arguments: {} });
+  const listText = listed.content.filter((c) => c.type === "text").map((c) => c.text).join("\n");
+  assert.match(listText, /1 photos in the library/);
+  assert.match(listText, /logo-green\.png 64x48 \(PNG, may be a cutout or logo\)/);
+  assert.equal(listed.content.filter((c) => c.type === "image").length, 1);
+  assert.doesNotMatch(listText, new RegExp(KEY), "the client key must not appear in photo links");
+
+  const photoUrl = listText.match(/https?:\/\/\S+\/files\/p\/\S+/)[0];
+  const served = await fetch(photoUrl);
+  assert.equal(served.status, 200);
+  assert.equal(served.headers.get("content-type"), "image/png");
+
+  const del = await fetch(`${BASE}/upload/${KEY}/delete`, {
+    method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ path }),
+  });
+  assert.equal(del.status, 200);
+  assert.match(textOf(await client.callTool({ name: "list_photos", arguments: {} })), /library is empty/);
+  await client.close();
+});
+
+test("render_post turns HTML slides into PNG downloads with previews", async () => {
+  const client = await connect();
+  const slide = (bg, words) => `<!doctype html><html><head><meta charset="utf-8"><style>
+    body{background:${bg};font:bold 96px sans-serif;color:#fff;display:flex;align-items:center;justify-content:center}
+  </style></head><body><div>${words}</div><script>document.body.style.background="red"</script></body></html>`;
+  const r = await client.callTool({ name: "render_post", arguments: { slides: [slide("#2f5d50", "Your mornings can be calmer."), slide("#1d1b18", "Here's how.")] } });
+  assert.notEqual(r.isError, true, textOf(r));
+  const t = r.content[0].text;
+  assert.match(t, /Rendered 2 images \(1080x1350 PNG\)/);
+  const urls = [...t.matchAll(/Slide \d: (\S+)/g)].map((m) => m[1]);
+  assert.equal(urls.length, 2);
+  assert.equal(r.content.filter((c) => c.type === "image").length, 2);
+
+  const png = Buffer.from(await (await fetch(urls[0])).arrayBuffer());
+  assert.equal(png.subarray(1, 4).toString(), "PNG");
+  assert.equal(png.readUInt32BE(16), 1080);
+  assert.equal(png.readUInt32BE(20), 1350);
+  await client.close();
+});
+
+test("render_post rejects bad input", async () => {
+  const client = await connect();
+  const none = await client.callTool({ name: "render_post", arguments: { slides: [] } });
+  assert.equal(none.isError, true);
+  const tooMany = await client.callTool({ name: "render_post", arguments: { slides: Array(11).fill("<p>x</p>") } });
+  assert.equal(tooMany.isError, true);
+  await client.close();
 });

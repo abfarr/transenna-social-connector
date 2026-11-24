@@ -48,7 +48,8 @@ Keep this list as the checklist for the whole onboarding.
 - Example Captions
 - Inspiration screenshots
 - Template Index
-- A folder of photos and branding
+- Their photo library: photos, cutouts and logo files uploaded through `get_photo_upload_link`
+- Whether they allow Unsplash stock photos for general scenes when their own photos don't fit
 
 ---
 

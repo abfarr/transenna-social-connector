@@ -35,7 +35,7 @@ Show me the draft. After I approve it, give it to me as a downloadable .md file 
 
 INTAKE TEXT:
 - Facts: use only what's in this guide, what I tell you, and my website {{website}}. Write all copy fresh in my voice; never copy website text, and leave out anything the hard rules ban.
-- Images: choose images yourself from the linked folder. Pick the hero image to fit the concept, don't reuse one in a carousel, and name which images you used in the assumptions line.
+{{image_sources}}
 - Broad topics: if a request covers several offers, several tips, or a big topic, don't make one slide per item. Find the one problem, question or moment my audience cares about and tell it as a story, with what I offer or know as the answer.
 - Before building any carousel or single post, propose 2 concepts. For each: the hook (the cover line, written as a tension, question, or surprising claim, never a topic title like "How we help..."), a one-line plan for each slide, and the one visual idea that makes it stand out (name the signature move and, for each slide, the layout and any layering move from section 12). Wait for me to pick one, then build.
 

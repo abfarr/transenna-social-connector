@@ -6,7 +6,7 @@ Give the client these files, each as a downloadable .md file named exactly as be
 
 2. **Example Captions**: the confirmed captions from step 3, each with its platform and date if known. If there were fewer than 5, add the client's best writing from other sources and say so.
 
-3. **Step 1 prompt**: call `build_kit_prompt` with prompt `voice_guide`. For a Sells account, also pass the sells fields (topics and offers, CTAs, props) from what you gathered.
+3. **Step 1 prompt**: call `build_kit_prompt` with prompt `voice_guide`. Pass `stock_photos: true` only if they said yes to Unsplash. For a Sells account, also pass the sells fields (topics and offers, CTAs, props) from what you gathered.
 
 4. **Step 2 prompt**: call `build_kit_prompt` with `brand_existing` if they have a logo, colors and fonts, with `brand_materials` set to the actual file names and URLs. Otherwise use `brand_new`.
 
@@ -16,12 +16,13 @@ Give the client these files, each as a downloadable .md file named exactly as be
 
 7. **Template Index**: call `build_kit_prompt` with `template_index`.
 
-8. **Setup checklist**: what's left before they send the Step 1 prompt. Files to add to their project (Client Onboarding Brief, Example Captions, Template Index, inspiration screenshots), the photo and branding folder to add, which prompt to send in which order, and every open [CONFIRM] item in one list.
+8. **Setup checklist**: what's left before they send the Step 1 prompt. Files to add to their project (Client Onboarding Brief, Example Captions, Template Index, inspiration screenshots), photos still to add to their library (with their upload link), which prompt to send in which order, and every open [CONFIRM] item in one list.
 
 Use the prompt text exactly as `build_kit_prompt` returns it. Don't edit, shorten or rewrite it.
 
 Before handing back, check:
 - The account type in the Step 1 prompt matches the brief
+- The brief says whether Unsplash stock photos are allowed
 - Every hex, font and claim in the brief has a source
 - No copy from the website, other accounts or inspiration is presented as the client's own words
 - Nothing in the brief breaks the hard rules for their account type

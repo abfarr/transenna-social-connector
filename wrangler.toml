@@ -1,6 +1,7 @@
 name = "scroll-model"
 main = "src/index.js"
 compatibility_date = "2025-11-01"
+compatibility_flags = ["nodejs_compat"]
 
 # Bundle the kit's markdown into the Worker as text.
 [[rules]]
@@ -10,6 +11,8 @@ fallthrough = true
 
 [vars]
 PRODUCT_NAME = "Scroll Model"
+# Most rendered images one client can make per day.
+RENDER_DAILY_LIMIT = "60"
 
 # Client keys. Create the namespace once with:
 #   npx wrangler kv namespace create CLIENTS
@@ -17,6 +20,16 @@ PRODUCT_NAME = "Scroll Model"
 [[kv_namespaces]]
 binding = "CLIENTS"
 id = "REPLACE_WITH_KV_NAMESPACE_ID"
+
+# Photo libraries and rendered posts. Create the bucket once with:
+#   npx wrangler r2 bucket create scroll-model-files
+[[r2_buckets]]
+binding = "FILES"
+bucket_name = "scroll-model-files"
+
+# Cloudflare Browser Rendering, used by render_post. Nothing to create.
+[browser]
+binding = "BROWSER"
 
 [observability]
 enabled = true

@@ -6,8 +6,10 @@ Open with one short, friendly message. Ask which of these they can share, and sa
 2. Their website URL
 3. Their social accounts (handles and which platforms)
 4. Other examples: past posts they're proud of, flyers, newsletters, a pitch deck, screenshots of accounts they admire
-5. Their logo files and a folder of photos
+5. Their logo files and best photos. Call `get_photo_upload_link` and give them the link to add these to their photo library; that's where posts will draw images from.
 6. If they have them: platform insights or analytics screenshots (top posts, reach, audience)
+
+Also ask, in one line, whether they're open to stock photos from Unsplash for general scenes and backgrounds when none of their own fit. Their own photos always come first. If they say yes, tell them to add the free Unsplash connector in their AI app's connector settings.
 
 Then confirm the account type in one line ("This sounds like a Sells account because..."). If it could be two, ask which one posts should serve first.
 
