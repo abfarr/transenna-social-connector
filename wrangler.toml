@@ -1,0 +1,22 @@
+name = "scroll-model"
+main = "src/index.js"
+compatibility_date = "2025-11-01"
+
+# Bundle the kit's markdown into the Worker as text.
+[[rules]]
+type = "Text"
+globs = ["**/*.md"]
+fallthrough = true
+
+[vars]
+PRODUCT_NAME = "Scroll Model"
+
+# Client keys. Create the namespace once with:
+#   npx wrangler kv namespace create CLIENTS
+# then paste the id it prints below.
+[[kv_namespaces]]
+binding = "CLIENTS"
+id = "9a4ec26196f9482481acf5192b3ec222"
+
+[observability]
+enabled = true
