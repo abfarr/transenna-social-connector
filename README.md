@@ -29,12 +29,15 @@ src/tools.js          the tools
 src/index.js          the MCP server and per-client access check
 scripts/clients.mjs   add, list, pause, resume and remove clients
 docs/client-setup.md  the guide you send to clients
+docs/deployment.md    operator runbook: what's live, how it was set up, what's left
 tests/                end-to-end test using the official MCP client
 ```
 
 To change what clients see, edit the Markdown in `content/` and deploy again.
 
 ## First deploy (once)
+
+Already done for Transenna's account on 2026-11-24. See [docs/deployment.md](docs/deployment.md) for the live URL, what was set up, and how to work from a new machine. These steps are for a fresh Cloudflare account.
 
 You need Node 20 or later and your Cloudflare account.
 
@@ -58,6 +61,8 @@ It prints your Worker URL, like `https://scroll-model.<you>.workers.dev`. Openin
 export CONNECTOR_URL=https://scroll-model.<you>.workers.dev
 npm run client -- add "Client Name"
 ```
+
+In PowerShell, set the URL with `$env:CONNECTOR_URL="https://scroll-model.<you>.workers.dev"` instead of `export`.
 
 That prints the client's private connector URL. Send it to them with `docs/client-setup.md`.
 
