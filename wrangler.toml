@@ -1,4 +1,4 @@
-name = "social-post-connector"
+name = "scroll-model"
 main = "src/index.js"
 compatibility_date = "2025-11-01"
 
@@ -9,7 +9,7 @@ globs = ["**/*.md"]
 fallthrough = true
 
 [vars]
-PRODUCT_NAME = "Social Post Studio"
+PRODUCT_NAME = "Scroll Model"
 
 # Client keys. Create the namespace once with:
 #   npx wrangler kv namespace create CLIENTS

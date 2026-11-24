@@ -1,4 +1,4 @@
-# Setting up your social post system
+# Setting up Scroll Model
 
 You'll get a private connector link from us. It looks like `https://.../mcp/abc123...`. Keep it to yourself, since anyone with it can use your access.
 

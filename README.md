@@ -46,12 +46,12 @@ Paste that id into `wrangler.toml` in place of `REPLACE_WITH_KV_NAMESPACE_ID`. C
 npm run deploy
 ```
 
-It prints your Worker URL, like `https://social-post-connector.<you>.workers.dev`. Opening it in a browser should say the connector is running.
+It prints your Worker URL, like `https://scroll-model.<you>.workers.dev`. Opening it in a browser should say the connector is running.
 
 ## Adding a client
 
 ```bash
-export CONNECTOR_URL=https://social-post-connector.<you>.workers.dev
+export CONNECTOR_URL=https://scroll-model.<you>.workers.dev
 npm run client -- add "Client Name"
 ```
 

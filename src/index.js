@@ -24,7 +24,7 @@ const CORS = {
 const rpcError = (id, code, message) => ({ jsonrpc: "2.0", id: id ?? null, error: { code, message } });
 
 function serverInfo(env) {
-  const name = env.PRODUCT_NAME || "Social Post Studio";
+  const name = env.PRODUCT_NAME || "Scroll Model";
   return {
     serverInfo: { name, version: "1.0.0" },
     instructions:
@@ -94,7 +94,7 @@ export default {
     if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
 
     if (url.pathname === "/" || url.pathname === "/health") {
-      return new Response(`${env.PRODUCT_NAME || "Social Post Studio"} connector is running.\n`, {
+      return new Response(`${env.PRODUCT_NAME || "Scroll Model"} connector is running.\n`, {
         headers: { "content-type": "text/plain" },
       });
     }
